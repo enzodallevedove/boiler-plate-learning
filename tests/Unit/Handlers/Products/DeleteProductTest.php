@@ -12,7 +12,7 @@ use Illuminate\Container\Container as Application;
 
 class DeleteProductTest extends TestCase
 {
-    public function test_can_handle()
+    public function testCanHandle()
     {
         $data = [
             'name' => $this->faker->sentence,

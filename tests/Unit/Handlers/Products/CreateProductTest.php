@@ -10,7 +10,7 @@ use Illuminate\Container\Container as Application;
 
 class CreateProductTest extends TestCase
 {
-    public function test_can_handle()
+    public function testCanHandle()
     {
         $data = [
             'name' => $this->faker->sentence,

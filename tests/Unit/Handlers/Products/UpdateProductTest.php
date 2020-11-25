@@ -11,7 +11,7 @@ use Illuminate\Container\Container as Application;
 
 class UpdateProductTest extends TestCase
 {
-    public function test_can_handle()
+    public function testCanHandle()
     {
         $data = [
             'name' => $this->faker->sentence,
@@ -23,16 +23,23 @@ class UpdateProductTest extends TestCase
         $model = Product::create($data);
         $id = $model->id;
 
-        $command = new CommandUpdateProduct($id,$data);
+        $newData = [
+            'name' => $this->faker->sentence,
+            'sku' => strtolower($this->faker->sentence),
+            'description' => $this->faker->paragraph,
+            'price' => $this->faker->randomFloat(),
+        ];
+
+        $command = new CommandUpdateProduct($id,$newData);
         $repository = new ProductRepository(Application::getInstance());
         $handler = new HandlerUpdateProduct($repository);
 
         $handle = $handler->handle($command);
 
         $this->assertEquals($id,$handle->id);
-        $this->assertEquals($data['name'],$handle->name);
-        $this->assertEquals($data['sku'],$handle->sku);
-        $this->assertEquals($data['description'],$handle->description);
-        $this->assertEquals($data['price'],$handle->price);
+        $this->assertEquals($newData['name'],$handle->name);
+        $this->assertEquals($newData['sku'],$handle->sku);
+        $this->assertEquals($newData['description'],$handle->description);
+        $this->assertEquals($newData['price'],$handle->price);
     }
 }

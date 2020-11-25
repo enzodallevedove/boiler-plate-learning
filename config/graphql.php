@@ -2,6 +2,23 @@
 
 declare(strict_types=1);
 
+use App\Http\GraphQL\Mutations\Posts\DeletePostMutation;
+use App\Http\GraphQL\Mutations\Posts\NewPostMutation;
+use App\Http\GraphQL\Mutations\Posts\UpdatePostMutation;
+use App\Http\GraphQL\Mutations\Products\DeleteProductMutation;
+use App\Http\GraphQL\Mutations\Products\NewProductMutation;
+use App\Http\GraphQL\Mutations\Products\UpdateProductMutation;
+use App\Http\GraphQL\Mutations\Sales\DeleteSaleMutation;
+use App\Http\GraphQL\Mutations\Sales\NewSaleMutation;
+use App\Http\GraphQL\Mutations\Sales\UpdateSaleMutation;
+use App\Http\GraphQL\Queries\Posts\PostsQuery;
+use App\Http\GraphQL\Queries\Products\ProductsQuery;
+use App\Http\GraphQL\Queries\Sales\SalesQuery;
+use App\Http\GraphQL\Types\PostType;
+use App\Http\GraphQL\Types\ProductType;
+use App\Http\GraphQL\Types\SaleItemInputType;
+use App\Http\GraphQL\Types\SaleItemType;
+use App\Http\GraphQL\Types\SaleType;
 use App\Http\GraphQL\Types\UserType;
 use App\Http\GraphQL\Types\RoleType;
 use App\Http\GraphQL\Types\TokenType;
@@ -15,6 +32,11 @@ use App\Http\GraphQL\Mutations\Users\UpdateUserMutation;
 use App\Http\GraphQL\Mutations\Users\DeleteUserMutation;
 use App\Http\GraphQL\Mutations\Users\RefreshTokenMutation;
 use App\Http\GraphQL\Mutations\Users\UpdateUserPasswordMutation;
+use App\Http\GraphQL\Queries\Suppliers\SuppliersQuery;
+use App\Http\GraphQL\Types\SupplierType;
+use App\Http\GraphQL\Mutations\Suppliers\NewSupplierMutation;
+use App\Http\GraphQL\Mutations\Suppliers\UpdateSupplierMutation;
+use App\Http\GraphQL\Mutations\Suppliers\DeleteSupplierMutation;
 
 return [
 
@@ -51,7 +73,7 @@ return [
     //     'mutation' => '\Rebing\GraphQL\GraphQLController@mutation'
     // ]
     //
-    'controllers' => \Rebing\GraphQL\GraphQLController::class.'@query',
+    'controllers' => \Rebing\GraphQL\GraphQLController::class . '@query',
 
     // Any middleware for the graphql route group
     'middleware' => [],
@@ -107,27 +129,50 @@ return [
     //      ],
     //  ]
     //
-    'schemas'                        => [
-        'default'                    => [
-            'query'                  => [
+    'schemas' => [
+        'default' => [
+            'query' => [
                 // Users
-                'users'              => UsersQuery::class,
-                'userInfos'          => UserInfosQuery::class,
-
+                'users' => UsersQuery::class,
+                'userInfos' => UserInfosQuery::class,
                 // Users
-                'roles'              => RolesQuery::class
+                'roles' => RolesQuery::class,
+                //Suppliers
+                'suppliers' => SuppliersQuery::class,
+                //Products
+                'products' => ProductsQuery::class,
+                //
+                'sales' => SalesQuery::class,
+                //
+                'posts' => PostsQuery::class,
             ],
-            'mutation'               => [
+            'mutation' => [
                 // Users
-                'logIn'              => LogInMutation::class,
-                'newUser'            => NewUserMutation::class,
-                'deleteUser'         => DeleteUserMutation::class,
-                'updateUser'         => UpdateUserMutation::class,
-                'refreshToken'       => RefreshTokenMutation::class,
-                'updateUserPassword' => UpdateUserPasswordMutation::class
+                'logIn' => LogInMutation::class,
+                'newUser' => NewUserMutation::class,
+                'deleteUser' => DeleteUserMutation::class,
+                'updateUser' => UpdateUserMutation::class,
+                'refreshToken' => RefreshTokenMutation::class,
+                'updateUserPassword' => UpdateUserPasswordMutation::class,
+                // Suppliers
+                'newSupplier' => NewSupplierMutation::class,
+                'updateSupplier' => UpdateSupplierMutation::class,
+                'deleteSupplier' => DeleteSupplierMutation::class,
+                //
+                'newProduct' => NewProductMutation::class,
+                'updateProduct' => UpdateProductMutation::class,
+                'deleteProduct' => DeleteProductMutation::class,
+                //
+                'newSale' => NewSaleMutation::class,
+                'updateSale' => UpdateSaleMutation::class,
+                'deleteSale' => DeleteSaleMutation::class,
+                //
+                'newPost' => NewPostMutation::class,
+                'updatePost' => UpdatePostMutation::class,
+                'deletePost' => DeletePostMutation::class,
             ],
-            'middleware'             => [],
-            'method'                 => ['get', 'post'],
+            'middleware' => [],
+            'method' => ['get', 'post'],
         ],
     ],
 
@@ -140,10 +185,16 @@ return [
     //     'user' => 'App\Http\GraphQL\Type\UserType'
     // ]
     //
-    'types'     => [
-        'role'  => RoleType::class,
-        'user'  => UserType::class,
-        'token' => TokenType::class
+    'types' => [
+        'role' => RoleType::class,
+        'user' => UserType::class,
+        'token' => TokenType::class,
+        'supplier' => SupplierType::class,
+        'product' => ProductType::class,
+        'sale' => SaleType::class,
+        'saleItem' => SaleItemType::class,
+        'saleItemInput' => SaleItemInputType::class,
+        'post' => PostType::class,
     ],
 
     // The types will be loaded on demand. Default is to load all types on each request
@@ -170,7 +221,7 @@ return [
     'errors_handler' => ['\Rebing\GraphQL\GraphQL', 'handleErrors'],
 
     // You can set the key, which will be used to retrieve the dynamic variables
-    'params_key'    => 'variables',
+    'params_key' => 'variables',
 
     /*
      * Options to limit the query complexity and depth. See the doc
@@ -178,8 +229,8 @@ return [
      * for details. Disabled by default.
      */
     'security' => [
-        'query_max_complexity'  => null,
-        'query_max_depth'       => null,
+        'query_max_complexity' => null,
+        'query_max_depth' => null,
         'disable_introspection' => false,
     ],
 
@@ -193,11 +244,11 @@ return [
      * Config for GraphiQL (see (https://github.com/graphql/graphiql).
      */
     'graphiql' => [
-        'prefix'     => '/graphiql',
-        'controller' => \Rebing\GraphQL\GraphQLController::class.'@graphiql',
+        'prefix' => '/graphiql',
+        'controller' => \Rebing\GraphQL\GraphQLController::class . '@graphiql',
         'middleware' => [],
-        'view'       => 'graphql::graphiql',
-        'display'    => env('ENABLE_GRAPHIQL', true),
+        'view' => 'graphql::graphiql',
+        'display' => env('ENABLE_GRAPHIQL', true),
     ],
 
     /*

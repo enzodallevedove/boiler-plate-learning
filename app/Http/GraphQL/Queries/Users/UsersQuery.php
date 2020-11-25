@@ -79,8 +79,8 @@ class UsersQuery extends BaseQuery
         if (isset($args['email'])) {
             $where->put('email', $args['email']);
         }
-
         $where->push(['email', '<>', [config('app.root_user.email')]]);
+
 
         return $this->dispatch(new GetUserWhere(
             $where->toArray(),
